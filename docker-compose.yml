@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: user-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+
+  web:
+    build: ./webapp
+    container_name: web-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./webapp/logs:/home/appuser/app/logs
+    networks:
+      - app-network
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    depends_on:
+      - web
+    networks:
+      - app-network
+    volumes:
+      - ./cloudflared:/etc/cloudflared
+    command: tunnel run my-webapp-tunnel
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
