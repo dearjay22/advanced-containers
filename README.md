@@ -1,67 +1,32 @@
-# Advanced Containers Assignment
+# PROG8850 - Assignment 3: NYC 311 Explorer
 
 ## Overview
-This project sets up a containerized web application (Flask API) with a MySQL database. Docker Compose orchestrates containers, volumes, and networking. 
-
-- Multi-stage Docker build for optimized image  
-- Web app + MySQL container  
-- Docker Compose orchestration  
-- Volumes for persistence  
-- Network isolation 
+Flask + MySQL project that ingests a slice of NYC 311 Service Requests (January 2023), provides search + aggregate views, and includes Selenium tests.
 
 ## Prerequisites
-- Docker & Docker Compose installed
-- Python 3.11 (for local dev if needed)
+- Docker & docker-compose
+- (Local tests) Chrome installed
 
-## Setup & Run
+## Setup & run
+1. Ensure `.env` exists (you provided it):
+FLASK_ENV=development
+FLASK_APP=app/main.py
+MYSQL_HOST=db
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=yourpassword
+MYSQL_DATABASE=nyc311
+APP_PORT=5000
 
-1. Copy `.env.example` to `.env` and modify credentials if needed:
+2. Place real January 2023 CSV at: data/311_2023_01.csv
+(CI uses `data/sample.csv` automatically.)
 
-```bash
-cp .env.example .env
-```
+3. Start with Docker: docker compose up -d --build
 
-2. Build and start containers:
+4. Run ETL (populates DB): docker compose exec web python etl/etl.py
 
-```bash
-docker-compose up --build -d
-```
-
-3. Access API at: http://localhost:5000
-
-
-## API Endpoints
-
-- POST /user → Create a user
-
-```bash
-{"first_name":"John","last_name":"Doe"}
-```
-
-- GET /user/{id} → Get user by ID
+5. Open the app: http://localhost:5000
 
 
-## Security
-
-- Non-root user in containers
-
-- Minimal base image
-
-- Environment variables for secrets
-
-- Docker volumes for data persistence
-
-
-## Testing
-
-- Create a user:
-
-```bash
-curl -X POST http://localhost:5000/user -H "Content-Type: application/json" -d '{"first_name":"Alice","last_name":"Smith"}'
-```
-
-- Get user:
-
-```bash
-curl http://localhost:5000/user/1
-```
+## Tests
+- Run locally: pytest -q

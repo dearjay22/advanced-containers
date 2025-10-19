@@ -1,6 +1,0 @@
-__pycache__
-*.pyc
-.env
-webapp/logs
-db/*.sql
-cloudflared/*.json

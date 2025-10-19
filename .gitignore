@@ -1,6 +1,17 @@
+# python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.venv/
+
+# local data & outputs
 .env
-webapp/logs/
-db/*.sql
-cloudflared/*.json
+data/*.csv
+data/*.parquet
+.backups/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
